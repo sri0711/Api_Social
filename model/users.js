@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-let mongooseSchema = new mongoose.Schema({
+let userSchema = new mongoose.Schema({
 	firstName: {
 		type: String,
 		required: true
 	},
 	lastName: {
 		type: String,
-		required: true
+		default:null
 	},
 	email: {
 		type: String,
@@ -26,5 +26,12 @@ let mongooseSchema = new mongoose.Schema({
 	password: {
 		type: String,
 		required: true
+	},
+	dob:{
+		type:Date,
+		default:null
 	}
 });
+
+
+exports.default = mongoose.model('users', userSchema);

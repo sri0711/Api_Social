@@ -11,6 +11,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 const cors = require('cors');
 const server = http.createServer(app);
+require('../db/mongo');
 
 // main configurations
 app.use(express.json());
