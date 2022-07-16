@@ -1,4 +1,4 @@
-const {connect,connection} = require('mongoose');
+const { connect, connection } = require('mongoose');
 const config = require('../config/dev');
 
 let url = config.dbConfig.url;
@@ -12,6 +12,11 @@ connect(url, {
 	useNewUrlParser: true
 });
 
-connection.on('connected',()=>{
-    console.log(`${config.dbConfig.DB_Name} is connected successfully!`);
-})
+connection.on('connecting', () => {
+	console.log(`${config.dbConfig.DB_Name} database is trying to connecting`);
+});
+connection.on('connected', () => {
+	console.log(
+		`${config.dbConfig.DB_Name} database is connected successfully!`
+	);
+});

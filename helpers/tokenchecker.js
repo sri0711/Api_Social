@@ -1,4 +1,4 @@
-const commonRoutes = ['/'];
+const commonRoutes = ['/','/user/create','/user/login'];
 module.exports = (req, res, next) => {
 	const routePath = String(req.originalUrl).toLowerCase();
 	const token = req.headers['x-access-token'] || req.headers['authorization'];

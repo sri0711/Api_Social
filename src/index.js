@@ -1,5 +1,6 @@
 const express = require('express');
 const io = require('socket.io')();
+const morgan = require('morgan');
 const http = require('http');
 var envs = process.env.NODE_ENV || 'development';
 if (envs === 'development') {
@@ -15,6 +16,7 @@ require('../db/mongo');
 
 // main configurations
 app.use(express.json());
+app.use(morgan('tiny'));
 app.use(tokenChecker);
 app.use(
 	cors({
@@ -44,11 +46,11 @@ io.on('connection', function (socket) {
 app.use('/', main);
 app.use('/user', user);
 
+
 app.use((err, req, res, next) => {
 	console.error(err);
 	res.status(500).send('Something broke!');
 });
-
 server.listen(port, () => {
 	console.log('server is started on https://localhost:', port);
 });
