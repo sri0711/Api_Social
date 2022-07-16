@@ -16,7 +16,7 @@ require('../db/mongo');
 
 // main configurations
 app.use(express.json());
-app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(tokenChecker);
 app.use(
 	cors({

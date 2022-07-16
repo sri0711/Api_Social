@@ -8,8 +8,7 @@ module.exports = (req, res, next) => {
 		if (token.startsWith('Bearer')) {
 			token = token.replace('Bearer ', '');
 			try {
-				var decoded = jwt.verify(token, process.env.SECRET);
-				console.log(decoded);
+				jwt.verify(token, process.env.SECRET);
 				next();
 			} catch (err) {
 				return res.status(403).json({

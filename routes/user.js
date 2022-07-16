@@ -40,10 +40,11 @@ router.post('/login', async (req, res) => {
 			postData.password,
 			userDetails.password
 		);
-		if (!verifyPassword)
+		if (!verifyPassword) {
 			return res
 				.status(200)
 				.json({ status: 'error', errorMessage: 'password did not match!' });
+		}
 		let token = await jwt.sign(
 			{
 				data: userDetails,
@@ -69,9 +70,46 @@ router.post('/login', async (req, res) => {
 
 router.post('/get', async (req, res) => {
 	let postData = req.body;
+	let Query = ['firstName', 'lastName', 'email', 'dob'];
 	try {
-		let result = await User.find({ mobile: postData.mobile });
+		let result = await User.findOne({ mobile: postData.mobile }).select(
+			Query
+		);
 		return res.status(200).json({ status: 'ok', data: result });
+	} catch (err) {
+		res.status(500).json({
+			status: 'err',
+			errorMessage: 'server getting error!'
+		});
+		throw err;
+	}
+});
+
+router.post('/changepassword', async (req, res) => {
+	let postData = req.body;
+	try {
+		let result = await User.findById(postData.ID);
+		if (result == null) {
+			return res.status(200).json({
+				status: error,
+				errorMessage: 'unnable to find user Details'
+			});
+		}
+		let verifyPassword = await bcrypt.compareSync(
+			postData.password,
+			result.password
+		);
+		if (!verifyPassword) {
+			return res
+				.status(200)
+				.json({ status: 'error', errorMessage: 'password did not match!' });
+		}
+		result.password = postData.newPassword;
+		result = await User(result);
+		result.save();
+		return res
+			.status(200)
+			.json({ status: 'ok', data: 'password Updated SuccessFully!' });
 	} catch (err) {
 		res.status(500).json({
 			status: 'err',
