@@ -12,9 +12,6 @@ connect(url, {
 	useNewUrlParser: true
 });
 
-connection.on('connecting', () => {
-	console.log(`${config.dbConfig.DB_Name} database is trying to connecting`);
-});
 connection.on('connected', () => {
 	console.log(
 		`${config.dbConfig.DB_Name} database is connected successfully!`
