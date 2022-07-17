@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../model/usersModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const emailMethod = require('../helpers/emailHelper');
 
 router.post('/create', async (req, res) => {
 	let postData = req.body;
@@ -14,6 +15,32 @@ router.post('/create', async (req, res) => {
 		res.status(500).json({
 			status: 'err',
 			errorMessage: 'server is not working'
+		});
+		throw err;
+	}
+});
+
+router.post('/activate', async (req, res) => {
+	let postData = req.body;
+	try {
+		let result = await User.findById(postData.ID);
+		console.log(result.otp);
+		if (result.otp === postData.otp) {
+			result.isActive = true;
+			await User.updateOne(result);
+			return res
+				.status(201)
+				.json({ status: 'ok', message: 'Your Account is activated !' });
+		} else {
+			res.status(200).json({
+				status: 'error',
+				errorMessage: 'please enter valid OTP!'
+			});
+		}
+	} catch (err) {
+		res.status(500).json({
+			status: 'err',
+			errorMessage: 'server getting error!'
 		});
 		throw err;
 	}
@@ -35,6 +62,12 @@ router.post('/login', async (req, res) => {
 					status: error,
 					errorMessage: 'user Details not Found!'
 				});
+		}
+		if (userDetails.isActive === false) {
+			return res.status(200).json({
+				status: 'error',
+				errorMessage: 'Please activate your Acount!'
+			});
 		}
 		let verifyPassword = await bcrypt.compareSync(
 			postData.password,
@@ -110,6 +143,26 @@ router.post('/changepassword', async (req, res) => {
 		return res
 			.status(200)
 			.json({ status: 'ok', data: 'password Updated SuccessFully!' });
+	} catch (err) {
+		res.status(500).json({
+			status: 'err',
+			errorMessage: 'server getting error!'
+		});
+		throw err;
+	}
+});
+
+router.post('/sendotp', async (req, res) => {
+	let postData = req.body;
+	try {
+		let result = await User.findById(postData.ID);
+		let data = await emailMethod.sendOTP(postData, result);
+		result.otp = data.otp;
+		await User.updateOne(result);
+		res.status(200).json({
+			status: 'ok',
+			message: 'email send successfully'
+		});
 	} catch (err) {
 		res.status(500).json({
 			status: 'err',

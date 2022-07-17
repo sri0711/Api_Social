@@ -16,7 +16,7 @@ let userSchema = new mongoose.Schema({
 		unique: true
 	},
 	mobile: {
-		type: String,
+		type: Number,
 		required: true
 	},
 	user: {
@@ -31,6 +31,14 @@ let userSchema = new mongoose.Schema({
 	dob: {
 		type: Date,
 		default: null
+	},
+	otp: {
+		type: Number,
+		default: null
+	},
+	isActive: {
+		type: Boolean,
+		default: false
 	}
 });
 
