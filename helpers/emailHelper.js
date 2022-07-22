@@ -10,7 +10,7 @@ const emailMethod = {
 			host: 'smtp.gmail.com',
 			secure: false,
 			auth: {
-				user: 'webdev.royalgroup@gmail.com',
+				user: process.env.EMAIL,
 				pass: process.env.EPASS
 			}
 		});
@@ -23,6 +23,21 @@ const emailMethod = {
 			subject: ''
 		};
 		if (postData.method === 'activation') {
+			let htmlData = await fs
+				.readFileSync('./templates/activation.html')
+				.toString();
+			htmlFile = await inject(htmlData, data);
+			data.subject = 'Account Activation';
+		}
+		if (postData.method === 'resend') {
+			let htmlData = await fs
+				.readFileSync('./templates/activation.html')
+				.toString();
+			htmlFile = await inject(htmlData, userData.otp);
+			data.subject = 'Account Activation';
+			data.otp = userData.otp;
+		}
+		if (postData.method === 'forgot') {
 			let htmlData = await fs
 				.readFileSync('./templates/activation.html')
 				.toString();

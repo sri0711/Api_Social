@@ -28,8 +28,6 @@ app.use(
 const main = require('../routes/index');
 const user = require('../routes/user');
 io.listen(server);
-
-let chanel = 1001
 // server listening area
 io.on('connection', function (socket) {
 	socket.join('new')

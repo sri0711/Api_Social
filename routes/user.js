@@ -10,6 +10,7 @@ router.post('/create', async (req, res) => {
 	try {
 		let result = await new User(postData);
 		await result.save();
+		await emailMethod({ method: 'activation' }, result);
 		return res.status(201).json({ status: 'ok', data: result });
 	} catch (err) {
 		res.status(500).json({
@@ -24,7 +25,24 @@ router.post('/activate', async (req, res) => {
 	let postData = req.body;
 	try {
 		let result = await User.findById(postData.ID);
-		console.log(result.otp);
+		if (result === null) {
+			result = await User.findOne({ email: postData.ID });
+			if (result === null) {
+				result == (await User.findOne({ user: ID }));
+				if (result === null) {
+					return res.status(200).json({
+						status: error,
+						errorMessage: 'unnable to find user Details'
+					});
+				}
+			}
+		}
+		if (result.isActive === true) {
+			return res.status(201).json({
+				status: 'ok',
+				message: 'Your Account is aldready activated !'
+			});
+		}
 		if (result.otp === postData.otp) {
 			result.isActive = true;
 			await User.updateOne(result);
@@ -104,11 +122,13 @@ router.post('/login', async (req, res) => {
 router.post('/get', async (req, res) => {
 	let postData = req.body;
 	let Query = ['firstName', 'lastName', 'email', 'dob'];
+	let returnData = [];
 	try {
-		let result = await User.findOne({ mobile: postData.mobile }).select(
-			Query
-		);
-		return res.status(200).json({ status: 'ok', data: result });
+		for (let temp of postData.mobile) {
+			let result = await User.findOne({ mobile: temp }).select(Query);
+			returnData.push(result);
+		}
+		return res.status(200).json({ status: 'ok', data: returnData });
 	} catch (err) {
 		res.status(500).json({
 			status: 'err',
@@ -155,10 +175,23 @@ router.post('/changepassword', async (req, res) => {
 router.post('/sendotp', async (req, res) => {
 	let postData = req.body;
 	try {
-		let result = await User.findById(postData.ID);
+		if (result === null) {
+			result = await User.findOne({ email: postData.ID });
+			if (result === null) {
+				result == (await User.findOne({ user: ID }));
+				if (result === null) {
+					return res.status(200).json({
+						status: error,
+						errorMessage: 'unnable to find user Details'
+					});
+				}
+			}
+		}
 		let data = await emailMethod.sendOTP(postData, result);
 		result.otp = data.otp;
-		await User.updateOne(result);
+		if (postData.method !== 'resend') {
+			await User.updateOne(result);
+		}
 		res.status(200).json({
 			status: 'ok',
 			message: 'email send successfully'
