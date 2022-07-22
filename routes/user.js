@@ -105,6 +105,7 @@ router.post('/login', async (req, res) => {
 		);
 		let data = jwt.verify(token, process.env.SECRET);
 		let date = new Date(data.exp * 1000);
+		data.data.password = '<hidden>'
 		res.status(200).json({
 			token,
 			data: data.data,
