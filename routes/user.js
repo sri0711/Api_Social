@@ -105,7 +105,7 @@ router.post('/login', async (req, res) => {
 		);
 		let data = jwt.verify(token, process.env.SECRET);
 		let date = new Date(data.exp * 1000);
-		data.data.password = '<hidden>'
+		data.data.password = '<hidden>';
 		res.status(200).json({
 			token,
 			data: data.data,
@@ -175,16 +175,20 @@ router.post('/changepassword', async (req, res) => {
 
 router.post('/sendotp', async (req, res) => {
 	let postData = req.body;
+	let result = null;
 	try {
 		if (result === null) {
 			result = await User.findOne({ email: postData.ID });
 			if (result === null) {
-				result == (await User.findOne({ user: ID }));
+				result == (await User.findOne({ user: postData.ID }));
 				if (result === null) {
-					return res.status(200).json({
-						status: error,
-						errorMessage: 'unnable to find user Details'
-					});
+					result = await User.findById(postData.ID);
+					if (result === null) {
+						return res.status(200).json({
+							status: error,
+							errorMessage: 'unnable to find user Details'
+						});
+					}
 				}
 			}
 		}
