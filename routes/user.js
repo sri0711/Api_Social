@@ -9,7 +9,10 @@ router.post('/exist', async (req, res) => {
 	let postData = req.body;
 	try {
 		let result = await User.find({ user: postData.user });
-		let data = result.length > 0 ? {status:'ok',} : {status:'error',errorMessage:'User Aldready found!'};
+		let data =
+			result.length > 0
+				? { status: 'ok', message: 'not Found' }
+				: { status: 'error', errorMessage: 'User Aldready found!' };
 		return res.status(200).json({ data });
 	} catch (err) {
 		res.status(500).json({
