@@ -20,7 +20,7 @@ app.use(morgan('dev'));
 app.use(tokenChecker);
 app.use(
 	cors({
-		origin: '*'
+		origin: ['http://localhost:3000', '*']
 	})
 );
 
@@ -30,7 +30,7 @@ const user = require('../routes/user');
 io.listen(server);
 // server listening area
 io.on('connection', function (socket) {
-	socket.join('new')
+	socket.join('new');
 	let news;
 	console.log('socket connected successfully');
 	socket.on(chanel, (data) => {
@@ -43,7 +43,6 @@ io.on('connection', function (socket) {
 
 app.use('/', main);
 app.use('/user', user);
-
 
 app.use((err, req, res, next) => {
 	console.error(err);
