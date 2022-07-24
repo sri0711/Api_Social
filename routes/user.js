@@ -5,6 +5,21 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const emailMethod = require('../helpers/emailHelper');
 
+router.post('/exist', async (req, res) => {
+	let postData = req.body;
+	try {
+		let result = await User.find({ user: postData.user });
+		let data = result.length > 0 ? {status:'ok',} : {status:'error',errorMessage:'User Aldready found!'};
+		return res.status(200).json({ data });
+	} catch (err) {
+		res.status(500).json({
+			status: 'err',
+			errorMessage: 'server getting error!'
+		});
+		throw err;
+	}
+});
+
 router.post('/create', async (req, res) => {
 	let postData = req.body;
 	try {
