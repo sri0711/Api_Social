@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const commonRoutes = ['/', '/user/create', '/user/login','/user/sendotp','/user/activate'];
+const commonRoutes = ['/', '/user/create', '/user/login','/user/sendotp','/user/activate','/user/exist'];
 
 module.exports = (req, res, next) => {
 	const routePath = String(req.originalUrl).toLowerCase();
